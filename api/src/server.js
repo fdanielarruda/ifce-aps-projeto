@@ -12,4 +12,4 @@ app.use(corsConfig)
 app.use(bodyParser.json())
 app.use(routes)
 
-server.listen(process.env.API_PORT || 3000)
+server.listen(process.env.API_PORT || 8000)

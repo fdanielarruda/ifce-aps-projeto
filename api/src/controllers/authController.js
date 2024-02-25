@@ -9,16 +9,16 @@ const login = async (req, res) => {
     try {
         const { email, password } = req.body
 
-        if (!email || !password) 
-            throw new Error('E-mail e senha são obrigatórios')
+        if (!email || !password)
+            return res.status(400).json({ message: 'E-mail e senha são obrigatórios' })
         
         const user = await User.findOne({ where: { email } })
 
         if (!user)
-            throw new Error('Usuário não encontrado')
+            return res.status(404).json({ message: 'Usuário não encontrado' })
 
         if (!await bcrypt.compare(password, user.password))
-            throw new Error('Senha inválida')
+            return res.status(400).json({ message: 'Senha inválida' })
         
         const token = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: '12h' });
 
