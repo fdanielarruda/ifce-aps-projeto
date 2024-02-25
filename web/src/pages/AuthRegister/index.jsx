@@ -1,17 +1,23 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import axios from 'axios';
+import { isLogged } from "../../utils/auth";
 
 export default function Home() {
     const [email, setEmail] = useState('')
     const [name, setName] = useState('')
     const [password, setPassword] = useState('')
 
+    useEffect(() => {
+        if (isLogged())
+            window.location.href = '/'
+    }, [])
+
     const handleSubmit = async (e) => {
         e.preventDefault()
 
         try {
             const url = import.meta.env.VITE_APP_API_URL
-            const response = await axios.post(`${url}/auth/login`, { email, name, password })
+            const response = await axios.post(`${url}/auth/register`, { email, name, password })
 
             if (response) {
                 alert('Usuário cadastrado sucesso!')

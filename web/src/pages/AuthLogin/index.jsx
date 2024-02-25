@@ -1,9 +1,15 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import axios from 'axios';
+import { isLogged } from "../../utils/auth";
 
 export default function Home() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+
+    useEffect(() => {
+        if (isLogged())
+            window.location.href = '/'
+    }, [])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -14,9 +20,9 @@ export default function Home() {
 
             if (response) {
                 alert('Login realizado com sucesso')
-                sessionStorage.setItem('token', response.data.token)
+                localStorage.setItem('token', response.data.token)
 
-                window.location.href = '/dashboard'
+                window.location.href = '/'
             }
         } catch (error) {
             alert(error.response.data.message ?? 'Erro ao realizar requisição')
