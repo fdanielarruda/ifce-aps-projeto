@@ -11,14 +11,14 @@ const login = async (req, res) => {
 
         if (!email || !password)
             return res.status(400).json({ message: 'E-mail e senha são obrigatórios' })
-        
+
         const user = await User.findOne({ where: { email } })
 
         if (!user)
-            return res.status(404).json({ message: 'Usuário não encontrado' })
+            return res.status(401).json({ message: 'Credenciais inválidas' })
 
         if (!await bcrypt.compare(password, user.password))
-            return res.status(400).json({ message: 'Senha inválida' })
+            return res.status(401).json({ message: 'Credenciais inválidas' })
         
         const token = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: '12h' });
 
@@ -53,18 +53,7 @@ const register = async (req, res) => {
 }
 
 const verify = async (req, res) => {
-    try {
-        const [, bearerToken] = req.headers.authorization.split(' ')
-
-        jwt.verify(bearerToken, process.env.JWT_SECRET, (err, decoded) => {
-            if (err)
-                throw new Error('Token inválido')
-
-            return res.json({ message: 'Token válido', user: decoded.user })
-        })
-    } catch (error) {
-        return res.status(500).json({ message: error.message })
-    }
+    return res.json({ message: 'Token válido', user: req._token.user })
 }
 
 module.exports = {
