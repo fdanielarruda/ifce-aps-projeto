@@ -10,7 +10,7 @@ export default function Page({ children, title = '', window = 'all', auth = fals
             redirectDocument("/login")
 
         if (window === 'mini')
-            setClassStyle('col-sm-12 col-md-6 col-lg-2')
+            setClassStyle('col-sm-12 col-md-6 col-lg-4')
     }, [])
 
     return (
