@@ -39,7 +39,7 @@ const Expense = getSequelize().define(
             defaultValue: false
         },
         recurring_date: {
-            type: DataTypes.DATE
+            type: DataTypes.INTEGER
         },
         paid_at: {
             type: DataTypes.DATE
