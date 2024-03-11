@@ -9,12 +9,12 @@ const create = async (req, res) => {
             amount,
             expense_date,
             is_recurring,
-            recurring_type,
+            recurring_date,
             paid_at
         } = req.body
 
         // validar obrigatorios
-        if (!user_id || !category_id || !title || !amount)
+        if (!category_id || !title || !amount)
             return res.status(400).json({ message: 'Missing required fields' })
 
         // validar category_id
@@ -29,10 +29,10 @@ const create = async (req, res) => {
             title,
             description,
             amount,
-            expense_date,
+            expense_date: expense_date ?? null,
             is_recurring,
-            recurring_type,
-            paid_at
+            recurring_date: recurring_date && is_recurring ? recurring_date : null,
+            paid_at: paid_at && paid_at != false ? new Date() : null
         })
 
         return res.status(201).json({ message: 'Expense created' })
@@ -51,6 +51,28 @@ const list = async (req, res) => {
         })
 
         return res.status(200).json({ expenses })
+    } catch (error) {
+        return res.status(500).json({ message: error.message })
+    }
+}
+
+const findOne = async (req, res) => {
+    try {
+        const { id } = req.params
+        const user = req._token.user
+
+        if (!id)
+            return res.status(400).json({ message: 'Invalid expense' })
+
+        const expense = await Expense.findOne({
+            where: { id, user_id: user.id },
+            include: { model: Category, as: 'category' }
+        })
+
+        if (!expense)
+            return res.status(400).json({ message: 'Expense not found' })
+
+        return res.status(200).json({ expense })
     } catch (error) {
         return res.status(500).json({ message: error.message })
     }
@@ -88,7 +110,7 @@ const update = async (req, res) => {
             amount,
             expense_date,
             is_recurring,
-            recurring_type,
+            recurring_date,
             paid_at
         } = req.body
 
@@ -120,7 +142,7 @@ const update = async (req, res) => {
             amount,
             expense_date,
             is_recurring,
-            recurring_type,
+            recurring_date,
             paid_at
         }, {
             where: { id }
@@ -135,6 +157,7 @@ const update = async (req, res) => {
 module.exports = {
     create,
     list,
+    findOne,
     remove,
     update
 }

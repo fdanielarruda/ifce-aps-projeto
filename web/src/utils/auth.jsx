@@ -1,3 +1,5 @@
+import axios from "axios"
+
 const isLogged = () => {
     if (localStorage) {
         const token = getAuth()
@@ -8,7 +10,15 @@ const isLogged = () => {
 
             const currentTime = Math.floor(Date.now() / 1000)
 
-            return token.exp > currentTime
+            if (token.exp > currentTime) {
+                return axios.post(`${import.meta.env.VITE_APP_API_URL}/auth/verify`, {}, { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } })
+                    .then(response => {
+                        return true
+                    })
+                    .catch(error => {
+                        return false
+                    });
+            }
         }
     }
 

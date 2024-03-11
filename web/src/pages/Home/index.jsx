@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { getAuth } from '../../utils/auth'
+import Page from "../../components/Template/Page";
+import Button from "../../components/Form/Button";
 
 export default function Home() {
     const [email, setEmail] = useState('')
@@ -15,19 +17,25 @@ export default function Home() {
     }, [])
 
     return (
-        <div>
-            <h2>Seja, bem-vindo!</h2>
-            <p>Seu email: {email}</p>
-            <p>Seu nome: {name}</p>
+        <Page auth={true}>
+            <h3 className="mb-4">Bem vindo, {name}</h3>
+            
+            <hr className="my-4" />
 
-            <button
+            <Button
+                text='Despesas'
+                color="info"
+                onClick={() => { window.location.href = '/expenses' }}
+            />
+
+            <Button
+                text='Sair'
+                color="danger"
                 onClick={() => {
                     localStorage.removeItem('token')
                     window.location.href = '/login'
                 }}
-            >
-                Sair
-            </button>
-        </div>
+            />
+        </Page>
     )
 }
