@@ -208,7 +208,7 @@ export default function ExpensesList() {
                 {expenses.length > 0 ? (
                     expenses.map((expense, index) => (
                         <div className="row" key={index}>
-                            <div className="col-md-4 mb-3">
+                            <div className="col-12 mb-3">
                                 <div className="card">
                                     <div className="card-body">
                                         <h5 className="card-title text-danger">R$ {Number(expense.amount).toFixed(2).replace('.', ',')} - {expense.title}</h5>
