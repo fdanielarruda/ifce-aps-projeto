@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react"
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import React, { useState } from "react"
 import axios from 'axios';
-import { isLogged } from "../../utils/auth";
+import Form from '../../components/Form/Form';
+import Input from '../../components/Form/Input';
+import Button from '../../components/Form/Button';
+import TextLink from '../../components/Utils/TextLink';
+import Page from '../../components/Template/Page';
 
 export default function Home() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-
-    useEffect(() => {
-        if (isLogged())
-            window.location.href = '/'
-    }, [])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -30,27 +31,34 @@ export default function Home() {
     }
 
     return (
-        <div>
-            <h2>Login</h2>
-
-            <form onSubmit={handleSubmit}>
-                <input
+        <Page window="mini" auth={false}>
+            <Form>
+                <Input
                     type="email"
+                    label="Nome"
+                    name="name"
                     placeholder="Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
 
-                <input
+                <Input
                     type="password"
-                    placeholder="Password"
+                    label="Senha"
+                    name="password"
+                    placeholder="Senha"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
 
-                <button type="submit">Login</button>
-                Não possui conta? <a href="/register">cadastre-se aqui</a>
-            </form>
-        </div>
+                <Button
+                    text="Entrar"
+                    type="submit"
+                    onClick={handleSubmit}                
+                />
+
+                Não possui conta? <TextLink text="cadastre-se aqui" url="/register" />
+            </Form>
+        </Page>
     )
 }
