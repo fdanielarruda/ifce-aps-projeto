@@ -8,6 +8,8 @@ use App\Http\Resources\BaseResource;
 use App\Http\Resources\TokenResource;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\AuthService;
+use App\Services\UserService;
 use Faker\Provider\Base;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Auth;
@@ -15,13 +17,14 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        protected UserService $service,
+        protected AuthService $authService
+    ) {}
+
     public function register(AuthRegisterRequest $request): UserResource
     {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password)
-        ]);
+        $user = $this->service->create($request->validated());
 
         return UserResource::make($user);
     }
@@ -31,33 +34,28 @@ class AuthController extends Controller
      */
     public function login(AuthLoginRequest $request): TokenResource
     {
-        $credentials = $request->only(['email', 'password']);
-
-        if (!$token = auth('api')->attempt($credentials)) {
-            throw new AuthenticationException('Unauthorized');
-        }
+        $token = $this->authService->authenticate($request->email, $request->password);
 
         return TokenResource::make($token);
     }
 
     public function me(): UserResource
     {
-        $user = auth('api')->user();
+        $user = $this->authService->getAuthenticatedUser();
 
         return UserResource::make($user);
     }
 
     public function logout(): BaseResource
     {
-        auth('api')->logout();
+        $this->authService->logout();
 
         return BaseResource::make(['message' => 'Successfully logged out']);
     }
 
     public function refresh(): TokenResource
     {
-        $token = JWTAuth::getToken();
-        $newToken = JWTAuth::refresh($token);
+        $newToken = $this->authService->refreshToken();
 
         return TokenResource::make($newToken);
     }
