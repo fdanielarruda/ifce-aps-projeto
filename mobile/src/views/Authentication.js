@@ -5,6 +5,7 @@ import { REACT_API_URL } from '@env'
 import PasswordInput from '../components/Authentication/PasswordInput'
 import LoginButton from '../components/Authentication/LoginButton'
 import { showAlert } from '../utils/alertUtils'
+import RegisterLink from '../components/Authentication/RegisterLink'
 
 const LoginScreen = () => {
     const [showPassword, setShowPassword] = useState(false)
@@ -72,6 +73,8 @@ const LoginScreen = () => {
             />
 
             <LoginButton onPress={handleLogin} />
+
+            <RegisterLink />
         </View>
     )
 }
