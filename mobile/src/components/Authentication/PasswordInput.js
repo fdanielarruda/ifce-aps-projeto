@@ -1,12 +1,13 @@
-import { TextInput, TouchableOpacity, View } from "react-native"
-import { MaterialCommunityIcons } from '@expo/vector-icons'
+import React, { forwardRef } from 'react';
+import { TextInput, TouchableOpacity, View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-const PasswordInput = ({ value, onChange, ref, showPassword, toggleShowPassword }) => (
-    <View className="w-3/4 flex-row items-center">
+const PasswordInput = forwardRef(({ value, onChange, showPassword, toggleShowPassword, placeholder }, ref) => (
+    <View className="w-3/4 flex-row mb-4 items-center">
         <TextInput
             ref={ref}
             className="flex-1 p-3 bg-white border border-gray-300 rounded-l"
-            placeholder="Senha"
+            placeholder={placeholder}
             secureTextEntry={!showPassword}
             onChangeText={onChange}
             value={value}
@@ -22,6 +23,6 @@ const PasswordInput = ({ value, onChange, ref, showPassword, toggleShowPassword 
             />
         </TouchableOpacity>
     </View>
-)
+));
 
-export default PasswordInput
+export default PasswordInput;
