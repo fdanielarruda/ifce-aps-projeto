@@ -1,8 +1,10 @@
 import React, { useRef, useState } from 'react'
-import { View, Text, TextInput, TouchableOpacity, Image, Alert } from 'react-native'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
+import { View, TextInput, Image, Alert } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { REACT_API_URL } from '@env'
+import PasswordInput from '../components/Authentication/PasswordInput'
+import LoginButton from '../components/Authentication/LoginButton'
+import { showAlert } from '../utils/alertUtils'
 
 const LoginScreen = () => {
     const [showPassword, setShowPassword] = useState(false)
@@ -11,12 +13,6 @@ const LoginScreen = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const navigation = useNavigation()
-
-    const showAlert = (title, message, onPress) => {
-        Alert.alert(title, message, [
-            { text: 'OK', onPress }
-        ])
-    }
 
     const handleLogin = async () => {
         try {
@@ -67,39 +63,15 @@ const LoginScreen = () => {
                 onSubmitEditing={() => passwordInputRef.current.focus()}
             />
 
-            <View className="w-3/4 flex-row items-center">
-                <TextInput
-                    ref={passwordInputRef}
-                    className="flex-1 p-3 bg-white border border-gray-300 rounded-l"
-                    placeholder="Senha"
-                    secureTextEntry={!showPassword}
-                    onChangeText={setPassword}
-                    value={password}
-                />
-                <TouchableOpacity
-                    className="p-4 bg-white border border-gray-300 rounded-r flex justify-center items-center"
-                    onPress={() => setShowPassword(!showPassword)}
-                >
-                    <MaterialCommunityIcons
-                        name={showPassword ? 'eye' : 'eye-off'}
-                        size={20}
-                        color="gray"
-                    />
-                </TouchableOpacity>
-            </View>
+            <PasswordInput
+                ref={passwordInputRef}
+                value={password}
+                onChange={setPassword}
+                showPassword={showPassword}
+                toggleShowPassword={() => setShowPassword(!showPassword)}
+            />
 
-            <TouchableOpacity
-                className="w-3/4 p-3 mt-4 bg-blue-900 rounded flex-row items-center justify-center"
-                onPress={handleLogin}
-            >
-                <MaterialCommunityIcons
-                    name="login"
-                    size={24}
-                    color="white"
-                    className="mr-2"
-                />
-                <Text className="text-white text-center ml-1 font-bold">ENTRAR</Text>
-            </TouchableOpacity>
+            <LoginButton onPress={handleLogin} />
         </View>
     )
 }
