@@ -40,7 +40,6 @@ const LoginScreen = () => {
                 showAlert('Erro de login', data.message || 'Ocorreu um erro durante o login.')
             }
         } catch (error) {
-            console.error(error)
             showAlert('Erro de conexão', 'Não foi possível conectar ao servidor.')
         }
     }
@@ -69,6 +68,7 @@ const LoginScreen = () => {
                 value={password}
                 onChange={setPassword}
                 showPassword={showPassword}
+                placeholder="Senha"
                 toggleShowPassword={() => setShowPassword(!showPassword)}
             />
 
