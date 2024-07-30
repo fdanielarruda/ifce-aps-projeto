@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { View, TextInput, Image, Text } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { REACT_API_URL } from '@env'
 import { showAlert } from '../utils/alertUtils'
 import RegisterButton from '../components/Register/RegisterButton'
@@ -16,6 +16,17 @@ const RegisterScreen = () => {
     const [password, setPassword] = useState('')
     const [passwordConfirmation, setPasswordConfirmation] = useState('')
     const navigation = useNavigation()
+
+    useFocusEffect(
+        React.useCallback(() => {
+            return () => {
+                setName('')
+                setEmail('')
+                setPassword('')
+                setPasswordConfirmation('')
+            }
+        }, [])
+    )
 
     const handleRegister = async () => {
         try {

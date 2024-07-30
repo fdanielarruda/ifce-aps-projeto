@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
-import { View, TextInput, Image, Alert, Text } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
+import { View, TextInput, Image, Text } from 'react-native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { REACT_API_URL } from '@env'
 import { showAlert } from '../utils/alertUtils'
 import LoginButton from '../components/Authentication/LoginButton'
@@ -11,7 +11,17 @@ const LoginScreen = () => {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+
     const navigation = useNavigation()
+
+    useFocusEffect(
+        React.useCallback(() => {
+            return () => {
+                setEmail('')
+                setPassword('')
+            }
+        }, [])
+    )
 
     const handleLogin = async () => {
         try {
