@@ -8,9 +8,9 @@ use Tymon\JWTAuth\Token;
 
 class AuthHelper
 {
-    public function getId()
+    public function getId(): int|null
     {
-
+        return auth('api')->id();
     }
 
     public function getUser(): Authenticatable
