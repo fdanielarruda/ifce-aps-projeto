@@ -1,10 +1,9 @@
 import React, { useRef, useState } from 'react'
-import { View, TextInput, Image, Alert } from 'react-native'
+import { View, TextInput, Image, Alert, Text } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { REACT_API_URL } from '@env'
-import PasswordInput from '../components/Authentication/PasswordInput'
-import LoginButton from '../components/Authentication/LoginButton'
 import { showAlert } from '../utils/alertUtils'
+import LoginButton from '../components/Authentication/LoginButton'
 import RegisterLink from '../components/Authentication/RegisterLink'
 
 const LoginScreen = () => {
@@ -45,36 +44,44 @@ const LoginScreen = () => {
     }
 
     return (
-        <View className="flex-1 justify-center items-center bg-gray-100">
+        <View className="flex-1 p-6 justify-center items-center bg-gray-100">
             <Image
                 source={require('../../assets/logo_conta_certa.png')}
-                className="w-40 mb-6"
+                className="w-40"
                 resizeMode="contain"
             />
 
-            <TextInput
-                className="w-3/4 p-3 mb-4 bg-white border border-gray-300 rounded"
-                placeholder="E-mail"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                returnKeyType="next"
-                onChangeText={setEmail}
-                value={email}
-                onSubmitEditing={() => passwordInputRef.current.focus()}
-            />
+            <View className="mt-6 w-full">
+                <Text className="text-gray-600 mb-2">E-mail</Text>
+                <TextInput
+                    className="border border-gray-300 p-3 rounded"
+                    placeholder="Digite seu endereço de e-mail"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    returnKeyType="next"
+                    onChangeText={setEmail}
+                    value={email}
+                    onSubmitEditing={() => passwordInputRef.current.focus()}
+                />
+            </View>
 
-            <PasswordInput
-                ref={passwordInputRef}
-                value={password}
-                onChange={setPassword}
-                showPassword={showPassword}
-                placeholder="Senha"
-                toggleShowPassword={() => setShowPassword(!showPassword)}
-            />
-
-            <LoginButton onPress={handleLogin} />
+            <View className="mt-4 w-full">
+                <Text className="text-gray-600 mb-2">Senha</Text>
+                <TextInput
+                    className="border border-gray-300 p-3 rounded"
+                    placeholder="**********"
+                    secureTextEntry
+                    ref={passwordInputRef}
+                    value={password}
+                    onChange={setPassword}
+                    showPassword={showPassword}
+                    toggleShowPassword={() => setShowPassword(!showPassword)}
+                />
+            </View>
 
             <RegisterLink />
+
+            <LoginButton onPress={handleLogin} />
         </View>
     )
 }
