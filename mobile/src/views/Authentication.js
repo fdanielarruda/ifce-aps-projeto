@@ -7,7 +7,6 @@ import LoginButton from '../components/Authentication/LoginButton'
 import RegisterLink from '../components/Authentication/RegisterLink'
 
 const LoginScreen = () => {
-    const [showPassword, setShowPassword] = useState(false)
     const passwordInputRef = useRef(null)
 
     const [email, setEmail] = useState('')
@@ -73,9 +72,7 @@ const LoginScreen = () => {
                     secureTextEntry
                     ref={passwordInputRef}
                     value={password}
-                    onChange={setPassword}
-                    showPassword={showPassword}
-                    toggleShowPassword={() => setShowPassword(!showPassword)}
+                    onChangeText={setPassword}
                 />
             </View>
 
