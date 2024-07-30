@@ -7,7 +7,7 @@ const RegisterButton = ({ onPress }) => (
         onPress={onPress}
     >
         <MaterialCommunityIcons
-            name="login"
+            name="account-plus"
             size={24}
             color="white"
             className="mr-2"
