@@ -3,12 +3,14 @@ import { createStackNavigator } from '@react-navigation/stack'
 import Authentication from '../views/Authentication'
 import Register from '../views/Register'
 import Home from '../views/Home'
+import GoalsList from '../views/GoalsList'
+import { StatusBar } from 'react-native'
 
 const Stack = createStackNavigator()
 
 export default props => (
     <Stack.Navigator
-        initialRouteName="Authentication"
+        initialRouteName="GoalsList"
         screenOptions={{ headerShown: false }}
     >
         <Stack.Screen
@@ -24,6 +26,11 @@ export default props => (
         <Stack.Screen
             name="Home"
             component={Home}
+        />
+
+        <Stack.Screen
+            name="GoalsList"
+            component={GoalsList}
         />
     </Stack.Navigator>
 )
