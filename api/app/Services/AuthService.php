@@ -23,7 +23,7 @@ class AuthService
         ];
 
         if (!$token = auth('api')->attempt($data)) {
-            throw new AuthenticationException('Unauthorized');
+            throw new AuthenticationException('Credenciais inválidas');
         }
 
         return $token;

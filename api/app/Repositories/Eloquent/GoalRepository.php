@@ -11,4 +11,21 @@ class GoalRepository extends BaseRepository implements GoalRepositoryInterface
     {
         parent::__construct($model);
     }
+
+    public function list(array $data = [])
+    {
+        $query = $this->model->query();
+
+        if (isset($data['user_id'])) {
+            $query->where('user_id', $data['user_id']);
+        }
+
+        if (!isset($data['show_completed']) || $data['show_completed'] == "false") {
+            $query->where('completed_at', null);
+        }
+
+        $query->orderBy('id', 'desc');
+
+        return $query->get();
+    }
 }

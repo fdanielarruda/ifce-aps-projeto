@@ -10,7 +10,7 @@ class BaseRepository
         protected Model $model
     ) {}
 
-    public function list()
+    public function list(array $data = [])
     {
         return $this->model->all();
     }

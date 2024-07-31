@@ -10,6 +10,7 @@ use App\Http\Resources\GoalResource;
 use App\Models\Goal;
 use App\Services\GoalService;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Http\Request;
 
 class GoalController
 {
@@ -22,9 +23,9 @@ class GoalController
      *
      * @return ResourceCollection<GoalResource>
      */
-    public function list(): ResourceCollection
+    public function list(Request $request): ResourceCollection
     {
-        $goals = $this->service->getAll();
+        $goals = $this->service->getAll($request->only('show_completed'));
 
         return GoalResource::collection($goals);
     }

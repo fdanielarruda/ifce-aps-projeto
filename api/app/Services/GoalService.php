@@ -12,11 +12,14 @@ class GoalService
         protected AuthHelper $authHelper
     ) {}
 
-    public function getAll()
+    public function getAll(array $filter)
     {
-        $user_id = $this->authHelper->getId();
+        $data = [
+            'user_id' => $this->authHelper->getId(),
+            'show_completed' => $filter['show_completed'] ?? null
+        ];
 
-        return $this->repository->findByColumn('user_id', $user_id);
+        return $this->repository->list($data);
     }
 
     public function create(array $data)
@@ -27,6 +30,7 @@ class GoalService
             'user_id' => $user_id,
             'title' => $data['title'],
             'description' => $data['description'],
+            'due_date' => $data['due_date']
         ]);
     }
 
