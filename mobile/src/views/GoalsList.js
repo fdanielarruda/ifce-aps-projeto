@@ -32,8 +32,6 @@ const App = () => {
 
     const getAllGoals = async (showCompleted = false) => {
         try {
-            console.log('get goals?show_completed=${showCompleted}')
-
             const response = await apiUtils(`goals?show_completed=${showCompleted}`, 'GET', {}, navigation);
 
             if (response.status === 200) {
