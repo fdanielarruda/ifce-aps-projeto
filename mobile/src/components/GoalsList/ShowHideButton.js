@@ -6,7 +6,7 @@ export default ({ hideCompleted, setHideCompleted }) => (
             onPress={() => setHideCompleted(!hideCompleted)}
         >
             <Text className="text-blue-500 border p-2 rounded border-blue-500">
-                {hideCompleted ? 'Mostrar Concluídos' : 'Ocultar Concluídos'}
+                {hideCompleted ? 'Ocultar Concluídos' : 'Mostrar Concluídos'}
             </Text>
         </TouchableOpacity>
     </View>

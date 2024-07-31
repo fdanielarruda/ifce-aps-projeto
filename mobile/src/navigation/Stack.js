@@ -4,7 +4,8 @@ import Authentication from '../views/Authentication'
 import Register from '../views/Register'
 import Home from '../views/Home'
 import GoalsList from '../views/GoalsList'
-import { StatusBar } from 'react-native'
+import NetworkError from '../views/NetworkError'
+import GoalCreate from '../views/GoalCreate'
 
 const Stack = createStackNavigator()
 
@@ -31,6 +32,16 @@ export default props => (
         <Stack.Screen
             name="GoalsList"
             component={GoalsList}
+        />
+
+        <Stack.Screen
+            name="GoalCreate"
+            component={GoalCreate}
+        />
+
+        <Stack.Screen
+            name="NetworkError"
+            component={NetworkError}
         />
     </Stack.Navigator>
 )

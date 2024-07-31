@@ -1,12 +1,14 @@
 import React, { useRef, useState } from 'react'
 import { View, TextInput, Image, Text } from 'react-native'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
-import { REACT_API_URL } from '@env'
 import { showAlert } from '../utils/alertUtils'
+import apiUtils from '../utils/apiUtils'
 import RegisterButton from '../components/Register/RegisterButton'
 import LoginLink from '../components/Register/LoginLink'
 
 const RegisterScreen = () => {
+    const navigation = useNavigation()
+
     const emailInputRef = useRef(null)
     const passwordInputRef = useRef(null)
     const confirmPasswordInputRef = useRef(null)
@@ -15,7 +17,6 @@ const RegisterScreen = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [passwordConfirmation, setPasswordConfirmation] = useState('')
-    const navigation = useNavigation()
 
     useFocusEffect(
         React.useCallback(() => {
@@ -40,30 +41,27 @@ const RegisterScreen = () => {
                 return
             }
 
-            const response = await fetch(`${REACT_API_URL}/auth/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name,
-                    email,
-                    password,
-                    password_confirmation: passwordConfirmation
-                }),
-            })
-
-            const data = await response.json()
-
-            if (response.ok) {
-                showAlert(
-                    'Cadastro bem-sucedido',
-                    'Você será redirecionado para a tela de login.',
-                    () => navigation.navigate('Authentication')
-                )
-            } else {
-                showAlert('Erro de cadastro', data.message || 'Ocorreu um erro durante o cadastro.')
+            if (password.length < 8) {
+                showAlert('Erro de validação', 'A senha deve ter pelo menos 8 caracteres')
+                return
             }
+
+            const response = await apiUtils('auth/register', 'POST', {
+                name,
+                email,
+                password,
+                password_confirmation: passwordConfirmation
+            }, navigation, false)
+
+            if (response.isSuccess) {
+                showAlert('Sucesso', 'Você será redirecionado para a tela de login.', () => navigation.navigate('Authentication'))
+                return
+            }
+
+            showAlert('Erro', response.message || 'Não foi possível fazer o cadastro.')
         } catch (error) {
-            showAlert('Erro de conexão', 'Não foi possível conectar ao servidor.')
+            console.log(error)
+            showAlert('Erro de conexão', 'Erro ao realizar requisição.')
         }
     }
 

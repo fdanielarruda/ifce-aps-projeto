@@ -1,10 +1,13 @@
 import React, { useRef, useState } from 'react'
 import { View, TextInput, Image, Text } from 'react-native'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { REACT_API_URL } from '@env'
 import { showAlert } from '../utils/alertUtils'
 import LoginButton from '../components/Authentication/LoginButton'
 import RegisterLink from '../components/Authentication/RegisterLink'
+import axios from 'axios'
+import apiUtils from '../utils/apiUtils'
 
 const LoginScreen = () => {
     const passwordInputRef = useRef(null)
@@ -17,6 +20,8 @@ const LoginScreen = () => {
     useFocusEffect(
         React.useCallback(() => {
             return () => {
+                isValidToken()
+
                 setEmail('')
                 setPassword('')
             }
@@ -30,25 +35,38 @@ const LoginScreen = () => {
                 return
             }
 
-            const response = await fetch(`${REACT_API_URL}/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-            })
+            const response = await apiUtils('auth/login', 'POST', { email, password }, navigation, false)
 
-            const data = await response.json()
+            if (response.isSuccess) {
+                await AsyncStorage.setItem('token', response.data.access_token)
 
-            if (response.ok) {
                 showAlert(
                     'Login bem-sucedido',
                     'Você será redirecionado para a tela inicial.',
-                    () => navigation.navigate('Home')
+                    () => navigation.navigate('GoalsList')
                 )
             } else {
-                showAlert('Erro de login', data.message || 'Ocorreu um erro durante o login.')
+                showAlert('Erro', response.message || 'Erro ao realizar login.')
             }
         } catch (error) {
-            showAlert('Erro de conexão', 'Não foi possível conectar ao servidor.')
+            console.log(error)
+            showAlert('Erro de conexão', 'Erro ao realizar requisição.')
+        }
+    }
+
+    const isValidToken = async () => {
+        try {
+            const token = await AsyncStorage.getItem('token')
+
+            if (token) {
+                const response = await apiUtils('auth/me', 'POST', {}, navigation, false)
+
+                if (response.isSuccess) {
+                    navigation.navigate('Home')
+                }
+            }
+        } catch (error) {
+            console.log(error)
         }
     }
 

@@ -1,68 +1,73 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
-import Goal from '../components/GoalsList/Goal';
+import { ScrollView, StatusBar, View } from 'react-native';
+import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { styled } from 'nativewind';
+import { REACT_API_URL } from '@env';
+import Goal from '../components/GoalsList/Goal';
 import TitleApp from '../components/App/TitleApp';
 import ShowHideButton from '../components/GoalsList/ShowHideButton';
 import CreateGoalButton from '../components/GoalsList/CreateGoalButton';
 import FooterApp from '../components/App/FooterApp';
+import { showAlert } from '../utils/alertUtils';
+import apiUtils from '../utils/apiUtils';
 
 const App = () => {
-    const [originalList] = useState([
-        { id: 1, title: 'Economizar 1000 reais', isCompleted: false },
-        { id: 2, title: 'Fazer 30 minutos de exercício', isCompleted: true },
-        { id: 3, title: 'Ler 1 livro', isCompleted: false },
-        { id: 4, title: 'Aprender React Native', isCompleted: true },
-        { id: 12, title: 'Fazer 30 minutos de exercício', isCompleted: true },
-        { id: 13, title: 'Ler 1 livro', isCompleted: false },
-        { id: 24, title: 'Aprender React Native', isCompleted: true },
-        { id: 22, title: 'Fazer 30 minutos de exercício', isCompleted: true },
-        { id: 33, title: 'Ler 1 livro', isCompleted: false },
-        { id: 34, title: 'Aprender React Native', isCompleted: true },
-        { id: 42, title: 'Fazer 30 minutos de exercício', isCompleted: true },
-        { id: 43, title: 'Ler 1 livro', isCompleted: false },
-        { id: 54, title: 'Aprender React Native', isCompleted: true },
-        { id: 52, title: 'Fazer 30 minutos de exercício', isCompleted: true },
-        { id: 63, title: 'Ler 1 livro', isCompleted: false },
-        { id: 64, title: 'Aprender React Native', isCompleted: true },
-        { id: 72, title: 'Fazer 30 minutos de exercício', isCompleted: true },
-        { id: 73, title: 'Ler 1 livro', isCompleted: false },
-        { id: 84, title: 'Aprender React Native', isCompleted: true }
-    ]);
+    const navigation = useNavigation();
 
-    const [list, setList] = useState(originalList);
-    const [hideCompleted, setHideCompleted] = useState(true);
+    const [list, setList] = useState([]);
+    const [hideCompleted, setHideCompleted] = useState(false);
 
     useEffect(() => {
-        if (hideCompleted) {
-            setList(originalList.filter(goal => !goal.isCompleted));
-        } else {
-            setList(originalList);
-        }
-    }, [hideCompleted, originalList]);
+        getAllGoals(hideCompleted);
+    }, [hideCompleted]);
 
-    const updateIsCompleted = (id, isCompleted) => {
-        const updatedList = list.map(goal => {
-            if (goal.id === id) {
-                goal.isCompleted = isCompleted;
-            }
-
-            return goal;
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            getAllGoals(hideCompleted);
         });
 
-        setList(updatedList);
-    }
+        return unsubscribe;
+    }, [navigation]);
+
+    const getAllGoals = async (showCompleted = false) => {
+        try {
+            console.log('get goals?show_completed=${showCompleted}')
+
+            const response = await apiUtils(`goals?show_completed=${showCompleted}`, 'GET', {}, navigation);
+
+            if (response.status === 200) {
+                setList(response.data);
+            } else {
+                showAlert('Erro', response.message || 'Não foi possível obter os objetivos.');
+            }
+        } catch (error) {
+            console.log(error);
+            showAlert('Erro de conexão', 'Erro ao realizar requisição.');
+        }
+    };
+
+    const handleGoalCompletedAt = async (id, isCompleted) => {
+        try {
+            console.log(id, isCompleted)
+            const response = await apiUtils(`goals/${id}/completed_at`, 'PATCH', { is_completed: isCompleted }, navigation);
+
+            if (response.status === 200) {
+                const updatedGoal = response.data;
+                const updatedList = list.map(item => item.id === updatedGoal.id ? updatedGoal : item);
+                setList(updatedList);
+            } else {
+                showAlert('Erro', response.message || 'Não foi possível atualizar o objetivo.');
+            }
+        } catch (error) {
+            console.log(error);
+            showAlert('Erro de conexão', 'Erro ao realizar requisição.');
+        }
+    };
 
     const handleCreateGoal = () => {
-        setList([
-            ...list,
-            {
-                id: Math.random(),
-                title: 'Novo objetivo',
-                isCompleted: false
-            }
-        ]);
-    }
+        navigation.navigate('GoalCreate');
+    };
 
     return (
         <>
@@ -86,8 +91,10 @@ const App = () => {
                                 <Goal
                                     key={goal.id}
                                     title={goal.title}
-                                    isCompleted={goal.isCompleted}
-                                    setIsCompleted={() => updateIsCompleted(goal.id, !goal.isCompleted)}
+                                    description={goal.description}
+                                    dueDate={goal.due_date}
+                                    completedAt={goal.completed_at}
+                                    setIsCompleted={() => handleGoalCompletedAt(goal.id, goal.completed_at == null)}
                                 />
                             ))}
                         </View>
@@ -100,6 +107,6 @@ const App = () => {
             <FooterApp />
         </>
     );
-}
+};
 
 export default styled(App);
