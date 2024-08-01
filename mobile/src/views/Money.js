@@ -1,17 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { Text, TextInput, View, TouchableOpacity, ScrollView } from 'react-native';
+import { Text, TextInput, View, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FooterApp from '../components/App/FooterApp';
 import TitleApp from '../components/App/TitleApp';
 import apiUtils from '../utils/apiUtils';
 import { showAlert } from '../utils/alertUtils';
+import ManagementArea from '../components/Money/ManagementArea';
+import Transaction from '../components/Money/Transaction';
+import EditingArea from '../components/Money/EditingArea';
+import { StatusBar } from 'expo-status-bar';
 
 const MoneyScreen = () => {
     const navigation = useNavigation();
+
+    const [isEditing, setIsEditing] = useState(null);
+
     const [balance, setBalance] = useState(0.00);
     const [amount, setAmount] = useState('');
     const [reason, setReason] = useState('');
+
     const [transactions, setTransactions] = useState([]);
 
     useEffect(() => {
@@ -88,11 +95,108 @@ const MoneyScreen = () => {
         }
     };
 
+    const handleSaveTransaction = async () => {
+        try {
+            let amountValue = parseFloat(amount);
+
+            if (isNaN(amountValue) || !reason) {
+                showAlert('Erro', 'Por favor, insira um valor válido e um motivo.');
+                return;
+            }
+
+            if (amountValue === 0) {
+                showAlert('Erro', 'Por favor, insira um valor diferente de 0.');
+                return;
+            }
+
+            const response = await apiUtils(`transactions/${isEditing}`, 'PUT', {
+                title: reason,
+                amount: amountValue,
+            }, navigation);
+
+            if (response.isSuccess) {
+                const updatedTransactions = transactions.map(item => {
+                    if (item.id === isEditing) {
+                        item.amount = amountValue;
+                        item.title = reason;
+                    }
+
+                    return item;
+                });
+
+                setTransactions(updatedTransactions);
+
+                setIsEditing(null);
+                setAmount('');
+                setReason('');
+
+                showAlert('Sucesso', 'Transação atualizada com sucesso.');
+                return;
+            }
+
+            showAlert('Erro', response.message || 'Não foi possível atualizar a transação.');
+        } catch (error) {
+            console.log(error);
+            showAlert('Erro de conexão', 'Erro ao realizar requisição.');
+        }
+    };
+
+    const handleDeleteTransaction = async () => {
+        try {
+            const response = await apiUtils(`transactions/${isEditing}`, 'DELETE', {}, navigation);
+
+            if (response.isSuccess) {
+                const updatedTransactions = transactions.filter(item => item.id !== isEditing);
+                setTransactions(updatedTransactions);
+
+                setIsEditing(null);
+                setAmount('');
+                setReason('');
+
+                showAlert('Sucesso', 'Transação deletada com sucesso.');
+                return;
+            }
+
+            showAlert('Erro', response.message || 'Não foi possível deletar a transação.');
+        } catch (error) {
+            console.log(error);
+            showAlert('Erro de conexão', 'Erro ao realizar requisição.');
+        }
+    };
+
+    const handleCancelEditTransaction = () => {
+        setIsEditing(null);
+        setAmount('');
+        setReason('');
+    };
+
+    const handleEdit = async (item) => {
+        setAmount(item.amount.toString());
+        setReason(item.title);
+        setIsEditing(item.id);
+    }
+
+    const handleEditAction = async (action) => {
+        if (action === 'cancel') {
+            handleCancelEditTransaction();
+            return;
+        }
+
+        if (action === 'update') {
+            handleSaveTransaction();
+            return;
+        }
+
+        if (action === 'delete') {
+            handleDeleteTransaction();
+        }
+    }
+
     return (
-        <View className="flex-1 bg-white">
+        <>
             <TitleApp title="Saldo e Histórico" icon="cash-multiple" />
 
-            <View className="flex-1 p-6">
+            <View className="flex-1 p-6 px-3 bg-white">
                 <View className="items-center mt-3 mb-6">
                     <Text className="text-4xl font-bold">R$ {balance.toFixed(2)}</Text>
                 </View>
@@ -104,64 +208,45 @@ const MoneyScreen = () => {
                         value={amount}
                         onChangeText={setAmount}
                     />
+
                     <TextInput
                         className="border border-gray-300 p-3 rounded mb-2"
                         placeholder="Motivo"
                         value={reason}
                         onChangeText={setReason}
                     />
-                    <View className="flex-row justify-between">
-                        <TouchableOpacity
-                            className="flex-1 items-center bg-green-500 p-3 rounded mr-2"
-                            onPress={() => handleTransaction('add')}
-                        >
-                            <View className="flex-row items-center">
-                                <MaterialCommunityIcons name="plus-circle-outline" size={24} color="white" />
-                                <Text className="text-white font-semibold ml-2">Entrada</Text>
-                            </View>
-                        </TouchableOpacity>
 
-                        <TouchableOpacity
-                            className="flex-1 items-center bg-red-500 p-3 rounded ml-2"
-                            onPress={() => handleTransaction('remove')}
-                        >
-                            <View className="flex-row items-center">
-                                <MaterialCommunityIcons name="minus-circle-outline" size={24} color="white" />
-                                <Text className="text-white font-semibold ml-2">Saída</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
+                    {
+                        !isEditing
+                            ? <ManagementArea handleTransaction={handleTransaction} />
+                            : <EditingArea handleEditAction={handleEditAction} />
+                    }
+
                 </View>
 
-                {transactions.length > 0 && (
-                    <Text className="text-lg font-bold mb-4">Movimentações</Text>
-                )}
+                {
+                    !isEditing
+                        ? <>
+                            {transactions.length > 0 && (
+                                <Text className="text-lg font-bold mb-4">Movimentações</Text>
+                            )}
 
-                <ScrollView className="flex-1">
-                    {transactions.map(item => (
-                        <View
-                            key={item.id.toString()}
-                            className={`flex-row items-center border border-gray-300 bg-white p-3 mb-2 rounded ${item.amount > 0 ? 'border-green-300' : 'border-red-300'}`}
-                        >
-                            <MaterialCommunityIcons
-                                name={item.amount > 0 ? 'plus-circle-outline' : 'minus-circle-outline'}
-                                size={24}
-                                color={item.amount > 0 ? '#22c55e' : '#dc2626'}
-                                className="mr-3"
-                            />
-                            <View className="flex-1">
-                                <Text className={`font-bold`}>
-                                    R$ {parseFloat(item.amount).toFixed(2)}
-                                </Text>
-                                <Text>{item.title}</Text>
-                            </View>
-                        </View>
-                    ))}
-                </ScrollView>
-            </View>
+                            <ScrollView className="flex-1">
+                                {transactions.map(item => (
+                                    <Transaction
+                                        key={item.id.toString()}
+                                        item={item}
+                                        onEdit={() => handleEdit(item)}
+                                    />
+                                ))}
+                            </ScrollView>
+                        </>
+                        : null
+                }
+            </View >
 
             <FooterApp />
-        </View>
+        </>
     );
 }
 
