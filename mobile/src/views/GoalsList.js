@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StatusBar, View } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { styled } from 'nativewind';
-import { REACT_API_URL } from '@env';
 import Goal from '../components/GoalsList/Goal';
 import TitleApp from '../components/App/TitleApp';
 import ShowHideButton from '../components/GoalsList/ShowHideButton';
@@ -16,7 +14,7 @@ const App = () => {
     const navigation = useNavigation();
 
     const [list, setList] = useState([]);
-    const [hideCompleted, setHideCompleted] = useState(false);
+    const [hideCompleted, setHideCompleted] = useState(true);
 
     useEffect(() => {
         getAllGoals(hideCompleted);

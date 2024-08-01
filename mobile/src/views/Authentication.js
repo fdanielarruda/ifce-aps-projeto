@@ -43,7 +43,7 @@ const LoginScreen = () => {
                 showAlert(
                     'Login bem-sucedido',
                     'Você será redirecionado para a tela inicial.',
-                    () => navigation.navigate('GoalsList')
+                    () => navigation.navigate('Home')
                 )
             } else {
                 showAlert('Erro', response.message || 'Erro ao realizar login.')
@@ -59,7 +59,7 @@ const LoginScreen = () => {
             const token = await AsyncStorage.getItem('token')
 
             if (token) {
-                const response = await apiUtils('auth/me', 'POST', {}, navigation, false)
+                const response = await apiUtils('auth/me', 'GET', {}, navigation, false)
 
                 if (response.isSuccess) {
                     navigation.navigate('Home')

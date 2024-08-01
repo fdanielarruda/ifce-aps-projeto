@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import { Text, TextInput, View, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, TextInput, View, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FooterApp from '../components/App/FooterApp';
 import TitleApp from '../components/App/TitleApp';
+import apiUtils from '../utils/apiUtils';
+import { showAlert } from '../utils/alertUtils';
 
 const MoneyScreen = () => {
     const navigation = useNavigation();
@@ -12,27 +14,78 @@ const MoneyScreen = () => {
     const [reason, setReason] = useState('');
     const [transactions, setTransactions] = useState([]);
 
-    const handleTransaction = (type) => {
-        const amountValue = parseFloat(amount);
-        if (isNaN(amountValue) || !reason) {
-            alert('Por favor, insira um valor válido e um motivo.');
-            return;
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            getAllTransactions();
+        });
+
+        return unsubscribe;
+    }, [navigation]);
+
+    useEffect(() => {
+        const balance = transactions.reduce((acc, item) => acc + parseFloat(item.amount), 0);
+        setBalance(balance);
+    }, [transactions]);
+
+    const getAllTransactions = async () => {
+        try {
+            const response = await apiUtils(`transactions`, 'GET', {}, navigation);
+
+            if (response.status === 200) {
+                setTransactions(response.data);
+            } else {
+                showAlert('Erro', response.message || 'Não foi possível obter as transações.');
+            }
+        } catch (error) {
+            console.log(error);
+            showAlert('Erro de conexão', 'Erro ao realizar requisição.');
         }
+    };
 
-        const newTransaction = {
-            id: transactions.length + 1,
-            type,
-            amount: amountValue,
-            reason,
-        };
+    const handleTransaction = async (type) => {
+        try {
+            let amountValue = Math.abs(parseFloat(amount));
 
-        setTransactions([newTransaction, ...transactions]);
+            if (type === 'remove') {
+                if (amountValue > balance) {
+                    showAlert('Erro', 'Saldo insuficiente.');
+                    return;
+                }
 
-        const newBalance = type === 'add' ? balance + amountValue : balance - amountValue;
-        setBalance(newBalance);
+                amountValue *= -1;
+            }
 
-        setAmount('');
-        setReason('');
+            if (isNaN(amountValue) || !reason) {
+                showAlert('Erro', 'Por favor, insira um valor válido e um motivo.');
+                return;
+            }
+
+            if (amountValue === 0) {
+                showAlert('Erro', 'Por favor, insira um valor diferente de 0.');
+                return;
+            }
+
+            const response = await apiUtils('transactions', 'POST', {
+                title: reason,
+                amount: amountValue,
+            }, navigation)
+
+            if (response.isSuccess) {
+                const newTransaction = response.data;
+                setTransactions([newTransaction, ...transactions]);
+
+                setAmount('');
+                setReason('');
+
+                showAlert('Sucesso', 'Transação cadastrada com sucesso.')
+                return
+            }
+
+            showAlert('Erro', response.message || 'Não foi possível fazer o cadastro.')
+        } catch (error) {
+            console.log(error)
+            showAlert('Erro de conexão', 'Erro ao realizar requisição.')
+        }
     };
 
     return (
@@ -80,30 +133,30 @@ const MoneyScreen = () => {
                     </View>
                 </View>
 
+                {transactions.length > 0 && (
+                    <Text className="text-lg font-bold mb-4">Movimentações</Text>
+                )}
+
                 <ScrollView className="flex-1">
-                    {transactions.length > 0 && (
-                        <Text className="text-lg font-bold mb-4">Movimentações</Text>
-                    )}
-                    <FlatList
-                        data={transactions}
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item }) => (
-                            <View className={`flex-row items-center border border-gray-300 bg-white p-3 mb-2 rounded ${item.type === 'add' ? 'border-green-300' : 'border-red-300'}`}>
-                                <MaterialCommunityIcons
-                                    name={item.type === 'add' ? 'plus-circle-outline' : 'minus-circle-outline'}
-                                    size={24}
-                                    color={item.type === 'add' ? '#22c55e' : '#dc2626'}
-                                    className="mr-3"
-                                />
-                                <View className="flex-1">
-                                    <Text className={`font-bold`}>
-                                        R$ {item.amount.toFixed(2)}
-                                    </Text>
-                                    <Text>{item.reason}</Text>
-                                </View>
+                    {transactions.map(item => (
+                        <View
+                            key={item.id.toString()}
+                            className={`flex-row items-center border border-gray-300 bg-white p-3 mb-2 rounded ${item.amount > 0 ? 'border-green-300' : 'border-red-300'}`}
+                        >
+                            <MaterialCommunityIcons
+                                name={item.amount > 0 ? 'plus-circle-outline' : 'minus-circle-outline'}
+                                size={24}
+                                color={item.amount > 0 ? '#22c55e' : '#dc2626'}
+                                className="mr-3"
+                            />
+                            <View className="flex-1">
+                                <Text className={`font-bold`}>
+                                    R$ {parseFloat(item.amount).toFixed(2)}
+                                </Text>
+                                <Text>{item.title}</Text>
                             </View>
-                        )}
-                    />
+                        </View>
+                    ))}
                 </ScrollView>
             </View>
 

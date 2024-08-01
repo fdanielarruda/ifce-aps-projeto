@@ -12,7 +12,7 @@ const Stack = createStackNavigator()
 
 export default props => (
     <Stack.Navigator
-        initialRouteName="GoalsList"
+        initialRouteName="Home"
         screenOptions={{ headerShown: false }}
     >
         <Stack.Screen

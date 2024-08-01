@@ -4,6 +4,7 @@ import { REACT_API_URL } from '@env';
 
 const apiUtils = async (url, method, body = null, navigation, redirect = true) => {
     const token = await AsyncStorage.getItem('token') ?? "";
+    console.log(`${REACT_API_URL}/${url}`);
 
     try {
         const response = await axios({

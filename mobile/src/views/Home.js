@@ -1,10 +1,53 @@
-import React from 'react';
-import { Image, Text, View, Button } from 'react-native';
+import React, { useEffect } from 'react';
+import { Image, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import FooterApp from '../components/App/FooterApp';
+import SeeObjectivesButton from '../components/Home/SeeObjectivesButton';
+import CreateObjectivesButton from '../components/Home/CreateObjectivesButton';
+import apiUtils from '../utils/apiUtils';
 
-const HomeScreen = (props) => {
+const HomeScreen = () => {
     const navigation = useNavigation();
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            isAuthenticated();
+        });
+
+        return unsubscribe;
+    }, [navigation]);
+
+    const isAuthenticated = async () => {
+        console.log('isAuth')
+        const token = await AsyncStorage.getItem('token');
+
+        if (!token) {
+            console.log('notToken')
+            navigation.navigate('Authentication');
+        }
+
+        isValidToken();
+    }
+
+    const isValidToken = async () => {
+        try {
+            console.log('isToken')
+            const token = await AsyncStorage.getItem('token')
+
+            if (token) {
+                const response = await apiUtils('auth/me', 'GET', {}, navigation, false)
+
+                if (!response.isSuccess) {
+                    console.log(response)
+                    navigation.navigate('Authentication');
+                }
+            }
+        } catch (error) {
+            console.log(error)
+            navigation.navigate('Authentication');
+        }
+    }
 
     return (
         <>
@@ -23,21 +66,8 @@ const HomeScreen = (props) => {
                         Seu aplicativo para gerenciar objetivos e metas de forma simples e eficiente.
                     </Text>
 
-                    <View className="w-full px-4">
-                        <Button
-                            title="Ver Objetivos"
-                            onPress={() => navigation.navigate('GoalsList')}
-                            color="#6200EE"
-                        />
-                    </View>
-
-                    <View className="w-full px-4 mt-4">
-                        <Button
-                            title="Criar Novo Objetivo"
-                            onPress={() => navigation.navigate('GoalCreate')}
-                            color="#03DAC6"
-                        />
-                    </View>
+                    <SeeObjectivesButton navigation={navigation} />
+                    <CreateObjectivesButton navigation={navigation} />
                 </View>
             </View>
 

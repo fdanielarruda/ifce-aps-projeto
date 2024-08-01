@@ -4,7 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons'
 export default ({ onPress }) => (
     <TouchableOpacity
         onPress={onPress}
-        className="flex-row items-center justify-center bg-blue-500 p-2 rounded-lg mt-5 mb-5"
+        className="flex-row items-center justify-center bg-blue-500 p-2 rounded-lg mt-5 mb-2"
     >
         <MaterialCommunityIcons
             name="plus-circle"
