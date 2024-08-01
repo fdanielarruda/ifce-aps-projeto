@@ -60,6 +60,22 @@ const App = () => {
         }
     };
 
+    const handleDeleteGoal = async (id) => {
+        try {
+            const response = await apiUtils(`goals/${id}`, 'DELETE', {}, navigation);
+
+            if (response.isSuccess) {
+                const updatedList = list.filter(item => item.id !== id);
+                setList(updatedList);
+            } else {
+                showAlert('Erro', response.message || 'Não foi possível excluir o objetivo.');
+            }
+        } catch (error) {
+            console.log(error);
+            showAlert('Erro de conexão', 'Erro ao realizar requisição.');
+        }
+    }
+
     const handleCreateGoal = () => {
         navigation.navigate('GoalCreate');
     };
@@ -90,6 +106,7 @@ const App = () => {
                                     dueDate={goal.due_date}
                                     completedAt={goal.completed_at}
                                     setIsCompleted={() => handleGoalCompletedAt(goal.id, goal.completed_at == null)}
+                                    onDelete={() => handleDeleteGoal(goal.id)}
                                 />
                             ))}
                         </View>
