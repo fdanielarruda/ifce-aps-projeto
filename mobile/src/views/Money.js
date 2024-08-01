@@ -141,12 +141,14 @@ const MoneyScreen = () => {
         }
     };
 
-    const handleDeleteTransaction = async () => {
+    const handleDeleteTransaction = async (id = null) => {
         try {
-            const response = await apiUtils(`transactions/${isEditing}`, 'DELETE', {}, navigation);
+            const editId = id || isEditing;
+
+            const response = await apiUtils(`transactions/${editId}`, 'DELETE', {}, navigation);
 
             if (response.isSuccess) {
-                const updatedTransactions = transactions.filter(item => item.id !== isEditing);
+                const updatedTransactions = transactions.filter(item => item.id !== editId);
                 setTransactions(updatedTransactions);
 
                 setIsEditing(null);
@@ -237,6 +239,7 @@ const MoneyScreen = () => {
                                         key={item.id.toString()}
                                         item={item}
                                         onEdit={() => handleEdit(item)}
+                                        onDelete={() => handleDeleteTransaction(item.id)}
                                     />
                                 ))}
                             </ScrollView>
