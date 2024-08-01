@@ -6,6 +6,7 @@ import Home from '../views/Home'
 import GoalsList from '../views/GoalsList'
 import NetworkError from '../views/NetworkError'
 import GoalCreate from '../views/GoalCreate'
+import Money from '../views/Money'
 
 const Stack = createStackNavigator()
 
@@ -37,6 +38,11 @@ export default props => (
         <Stack.Screen
             name="GoalCreate"
             component={GoalCreate}
+        />
+
+        <Stack.Screen
+            name="Money"
+            component={Money}
         />
 
         <Stack.Screen

@@ -24,7 +24,7 @@ export default () => {
 
             <TouchableOpacity
                 className="flex-1 items-center"
-                onPress={() => navigation.navigate('Home')}
+                onPress={() => navigation.navigate('Money')}
             >
                 <MaterialCommunityIcons name="cash-multiple" size={24} color="black" />
             </TouchableOpacity>

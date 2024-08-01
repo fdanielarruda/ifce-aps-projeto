@@ -47,7 +47,6 @@ const App = () => {
 
     const handleGoalCompletedAt = async (id, isCompleted) => {
         try {
-            console.log(id, isCompleted)
             const response = await apiUtils(`goals/${id}/completed_at`, 'PATCH', { is_completed: isCompleted }, navigation);
 
             if (response.status === 200) {
