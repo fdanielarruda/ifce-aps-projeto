@@ -2,11 +2,9 @@ import React, { useRef, useState } from 'react'
 import { View, TextInput, Image, Text } from 'react-native'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { REACT_API_URL } from '@env'
 import { showAlert } from '../utils/alertUtils'
 import LoginButton from '../components/Authentication/LoginButton'
 import RegisterLink from '../components/Authentication/RegisterLink'
-import axios from 'axios'
 import apiUtils from '../utils/apiUtils'
 
 const LoginScreen = () => {
