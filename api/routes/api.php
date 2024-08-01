@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GoalController;
+use App\Http\Controllers\TransactionController;
 
 Route::group(['middleware' => 'api'], function () {
     Route::group(['prefix' => 'auth'], function () {
@@ -20,6 +21,13 @@ Route::group(['middleware' => 'api'], function () {
             Route::put('/{goal}', [GoalController::class, 'update']);
             Route::patch('/{goal}/completed_at', [GoalController::class, 'updateCompletedAt']);
             Route::delete('/{goal}', [GoalController::class, 'delete']);
+        });
+
+        Route::group(['prefix' => 'transactions'], function () {
+            Route::get('/', [TransactionController::class, 'list']);
+            Route::post('/', [TransactionController::class, 'create']);
+            Route::put('/{transaction}', [TransactionController::class, 'update']);
+            Route::delete('/{transaction}', [TransactionController::class, 'delete']);
         });
     });
 });
