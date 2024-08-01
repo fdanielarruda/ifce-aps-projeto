@@ -7,7 +7,7 @@ const Goal = ({ id, title, description, dueDate, completedAt, setIsCompleted, on
     return (
         <SwipeRow rightOpenValue={-55} disableRightSwipe>
             <View className="flex-row justify-end items-center bg-silver-500">
-                <View className="flex-row bg-red-500 h-20 w-14 justify-center items-center">
+                <View className="flex-row bg-red-500 h-20 w-14 around justify-center items-center">
                     <TouchableOpacity onPress={onDelete}>
                         <Text className="text-white pb-3">
                             <MaterialCommunityIcons

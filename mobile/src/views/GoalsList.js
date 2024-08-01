@@ -106,6 +106,7 @@ const App = () => {
                                     dueDate={goal.due_date}
                                     completedAt={goal.completed_at}
                                     setIsCompleted={() => handleGoalCompletedAt(goal.id, goal.completed_at == null)}
+                                    onDelete={() => handleDeleteGoal(goal.id)}
                                 />
                             ))}
                         </View>
