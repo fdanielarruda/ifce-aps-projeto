@@ -107,6 +107,7 @@ const App = () => {
                                     completedAt={goal.completed_at}
                                     setIsCompleted={() => handleGoalCompletedAt(goal.id, goal.completed_at == null)}
                                     onDelete={() => handleDeleteGoal(goal.id)}
+                                    onEdit={() => navigation.navigate('GoalCreate', { goal })}
                                 />
                             ))}
                         </View>

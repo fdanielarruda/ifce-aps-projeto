@@ -3,11 +3,23 @@ import { styled } from "nativewind";
 import { SwipeRow } from 'react-native-swipe-list-view';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-const Goal = ({ id, title, description, dueDate, completedAt, setIsCompleted, onDelete }) => {
+const Goal = ({ id, title, description, dueDate, completedAt, setIsCompleted, onDelete, onEdit }) => {
     return (
-        <SwipeRow rightOpenValue={-55} disableRightSwipe>
+        <SwipeRow rightOpenValue={-112} disableRightSwipe>
             <View className="flex-row justify-end items-center bg-silver-500">
-                <View className="flex-row bg-red-500 h-20 w-14 around justify-center items-center">
+                <View className="flex-row bg-yellow-500 h-20 w-14 rounded justify-center items-center">
+                    <TouchableOpacity onPress={onEdit}>
+                        <Text className="text-white pb-3">
+                            <MaterialCommunityIcons
+                                name="pencil"
+                                size={24}
+                                color="white"
+                            />
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+
+                <View className="flex-row bg-red-500 h-20 w-14 rounded justify-center items-center">
                     <TouchableOpacity onPress={onDelete}>
                         <Text className="text-white pb-3">
                             <MaterialCommunityIcons

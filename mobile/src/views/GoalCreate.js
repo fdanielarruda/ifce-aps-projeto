@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { StatusBar, Text, TextInput, View, Platform } from 'react-native'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { styled } from 'nativewind'
@@ -10,7 +10,9 @@ import { showAlert } from '../utils/alertUtils'
 import BackToListButton from '../components/GoalsList/BackToListButton'
 import apiUtils from '../utils/apiUtils'
 
-const App = () => {
+const App = ({ route }) => {
+    const params = route.params;
+
     const navigation = useNavigation()
 
     const descriptionInputRef = useRef(null)
@@ -23,29 +25,37 @@ const App = () => {
 
     useFocusEffect(
         React.useCallback(() => {
-            return () => {
-                setTitle('')
-                setDescription('')
-                setDueDate(new Date())
-            }
+            if (params?.goal) {
+                setTitle(params.goal.title)
+                setDescription(params.goal.description)
+                setDueDate(new Date(params.goal.due_date))
+                return;
+            } 
+
+            setTitle('')
+            setDescription('')
+            setDueDate(new Date())
         }, [])
     )
 
-    const handleCreateGoal = async () => {
+    const handleCreateUpdateGoal = async () => {
         try {
             if (!title) {
                 showAlert('Campos obrigatórios', 'Preencha o título do objetivo.')
                 return
             }
 
-            const response = await apiUtils('goals', 'POST', {
+            const route = params?.goal ? `goals/${params.goal.id}` : 'goals'
+
+            const response = await apiUtils(route, 'PUT', {
                 title,
                 description,
                 due_date: dueDate,
             }, navigation)
 
             if (response.isSuccess) {
-                showAlert('Sucesso', 'Objetivo cadastrado com sucesso.', () => navigation.navigate('GoalsList'))
+                const message = params?.goal ? 'Objetivo atualizado com sucesso.' : 'Objetivo cadastrado com sucesso.'
+                showAlert('Sucesso', message, () => navigation.navigate('GoalsList'))
                 return
             }
 
@@ -132,7 +142,7 @@ const App = () => {
                     </View>
 
                     <View>
-                        <CreateGoalButton onPress={handleCreateGoal} />
+                        <CreateGoalButton onPress={handleCreateUpdateGoal} goal={params?.goal} />
                         <BackToListButton onPress={handleBackToList} />
                     </View>
                 </View>
