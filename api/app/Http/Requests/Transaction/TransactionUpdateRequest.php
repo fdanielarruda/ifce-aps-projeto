@@ -24,6 +24,8 @@ class TransactionUpdateRequest extends FormRequest
         return [
             'title' => ['nullable', 'string', 'max:255'],
             'amount' => ['nullable', 'numeric', 'between:-9999999.99,9999999.99'],
+            'goals' => ['nullable', 'array'],
+            'goals.*' => ['integer', 'exists:goals,id']
         ];
     }
 }

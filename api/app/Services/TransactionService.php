@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\ArrayHelper;
 use App\Helpers\AuthHelper;
 use App\Repositories\Interfaces\TransactionRepositoryInterface;
 
@@ -9,7 +10,8 @@ class TransactionService
 {
     public function __construct(
         protected TransactionRepositoryInterface $repository,
-        protected AuthHelper $authHelper
+        protected AuthHelper $authHelper,
+        protected ArrayHelper $arrayHelper
     ) {}
 
     public function getAll()
@@ -36,7 +38,13 @@ class TransactionService
 
     public function update(int $id, array $data)
     {
-        $this->repository->update($id, $data);
+        $updatedData = $this->arrayHelper->only($data, ['title', 'amount']);
+
+        $this->repository->update($id, $updatedData);
+
+        if (isset($data['goals'])) {
+            $this->repository->syncGoals($id, $data['goals']);
+        }
 
         return $this->repository->findOne($id);
     }
