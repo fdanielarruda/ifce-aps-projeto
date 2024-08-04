@@ -8,7 +8,8 @@ import { showAlert } from '../utils/alertUtils';
 import ManagementArea from '../components/Money/ManagementArea';
 import Transaction from '../components/Money/Transaction';
 import EditingArea from '../components/Money/EditingArea';
-import { StatusBar } from 'expo-status-bar';
+import SyncGoals from '../components/Money/SyncGoals';
+import { styled } from 'nativewind';
 
 const MoneyScreen = () => {
     const navigation = useNavigation();
@@ -18,6 +19,7 @@ const MoneyScreen = () => {
     const [balance, setBalance] = useState(0.00);
     const [amount, setAmount] = useState('');
     const [reason, setReason] = useState('');
+    const [goals, setGoals] = useState([]);
 
     const [transactions, setTransactions] = useState([]);
 
@@ -75,6 +77,7 @@ const MoneyScreen = () => {
             const response = await apiUtils('transactions', 'POST', {
                 title: reason,
                 amount: amountValue,
+                goals
             }, navigation)
 
             if (response.isSuccess) {
@@ -83,6 +86,7 @@ const MoneyScreen = () => {
 
                 setAmount('');
                 setReason('');
+                setGoals([]);
 
                 showAlert('Sucesso', 'Transação cadastrada com sucesso.')
                 return
@@ -202,6 +206,7 @@ const MoneyScreen = () => {
                 <View className="items-center mt-3 mb-6">
                     <Text className="text-4xl font-bold">R$ {balance.toFixed(2)}</Text>
                 </View>
+
                 <View className="mb-6">
                     <TextInput
                         className="border border-gray-300 p-3 rounded mb-2"
@@ -216,6 +221,11 @@ const MoneyScreen = () => {
                         placeholder="Motivo"
                         value={reason}
                         onChangeText={setReason}
+                    />
+
+                    <SyncGoals
+                        goals={goals}
+                        setGoals={setGoals}
                     />
 
                     {
@@ -253,4 +263,4 @@ const MoneyScreen = () => {
     );
 }
 
-export default MoneyScreen;
+export default styled(MoneyScreen);

@@ -38,8 +38,8 @@ const Transaction = ({ item, onEdit, onDelete }) => (
                 color={item.amount > 0 ? '#22c55e' : '#dc2626'}
                 className="mr-3"
             />
-            <View className="flex-1">
-                <Text className={`font-bold`}>
+            <View className="flex-1 ml-3">
+                <Text className="font-bold">
                     R$ {parseFloat(item.amount).toFixed(2)}
                 </Text>
                 <Text>{item.title}</Text>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StatusBar, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { styled } from 'nativewind';
 import Goal from '../components/GoalsList/Goal';
@@ -88,8 +88,6 @@ const App = () => {
             />
 
             <View className="flex-1 p-6 px-3 bg-white">
-                <StatusBar hidden={false} />
-
                 <ShowHideButton
                     hideCompleted={hideCompleted}
                     setHideCompleted={setHideCompleted}
