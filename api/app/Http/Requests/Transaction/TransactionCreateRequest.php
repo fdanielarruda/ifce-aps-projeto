@@ -24,6 +24,7 @@ class TransactionCreateRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'amount' => ['required', 'numeric', 'between:-9999999.99,9999999.99'],
+            'goals.*' => ['nullable', 'exists:goals,id'],
         ];
     }
 }

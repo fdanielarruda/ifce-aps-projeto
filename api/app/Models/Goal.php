@@ -16,4 +16,16 @@ class Goal extends Model
         'due_date',
         'completed_at'
     ];
+
+    protected $hidden = ['pivot'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function transactions()
+    {
+        return $this->belongsToMany(Transaction::class);
+    }
 }

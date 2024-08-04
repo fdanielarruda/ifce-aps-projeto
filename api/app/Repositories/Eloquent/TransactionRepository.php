@@ -23,4 +23,18 @@ class TransactionRepository extends BaseRepository implements TransactionReposit
 
         return $query->orderBy('id', 'desc')->get();
     }
+
+    public function findOne(int $id)
+    {
+        return $this->model->find($id)->load(['goals']);
+    }
+
+    public function syncGoals(int $id, array $goals)
+    {
+        $transaction = $this->findOne($id);
+
+        if ($transaction) {
+            $transaction->goals()->sync($goals);
+        }
+    }
 }

@@ -23,11 +23,15 @@ class TransactionService
     {
         $user_id = $this->authHelper->getId();
 
-        return $this->repository->create([
+        $transaction = $this->repository->create([
             'user_id' => $user_id,
             'title' => $data['title'],
             'amount' => $data['amount']
         ]);
+
+        $this->repository->syncGoals($transaction->id, $data['goals'] ?? []);
+
+        return $this->repository->findOne($transaction->id);
     }
 
     public function update(int $id, array $data)
