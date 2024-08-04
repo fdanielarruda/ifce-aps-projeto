@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { StatusBar, Text, TextInput, View, Platform } from 'react-native'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { styled } from 'nativewind'
@@ -46,8 +46,9 @@ const App = ({ route }) => {
             }
 
             const route = params?.goal ? `goals/${params.goal.id}` : 'goals'
+            const method = params?.goal ? 'PUT' : 'POST'
 
-            const response = await apiUtils(route, 'PUT', {
+            const response = await apiUtils(route, method, {
                 title,
                 description,
                 due_date: dueDate,
