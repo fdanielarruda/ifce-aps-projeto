@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, TextInput, View, ScrollView } from 'react-native';
+import { Text, TextInput, View, ScrollView, StatusBar } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import FooterApp from '../components/App/FooterApp';
 import TitleApp from '../components/App/TitleApp';
@@ -203,6 +203,8 @@ const MoneyScreen = () => {
             <TitleApp title="Saldo e Histórico" icon="cash-multiple" />
 
             <View className="flex-1 p-6 px-3 bg-white">
+                <StatusBar hidden={false} />
+
                 <View className="items-center mt-3 mb-6">
                     <Text className="text-4xl font-bold">R$ {balance.toFixed(2)}</Text>
                 </View>

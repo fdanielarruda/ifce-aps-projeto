@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Image, Text, View } from 'react-native';
+import { Image, StatusBar, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FooterApp from '../components/App/FooterApp';
@@ -52,6 +52,8 @@ const HomeScreen = () => {
     return (
         <>
             <View className="flex-1 p-6 justify-center bg-white">
+                <StatusBar hidden={false} />
+
                 <View className="items-center mb-6">
                     <Image
                         source={require('../../assets/logo_conta_certa.png')}

@@ -85,7 +85,7 @@ const App = ({ route }) => {
     return (
         <>
             <TitleApp
-                title="Novo Objetivo"
+                title={params?.goal ? 'Editar Objetivo' : 'Novo Objetivo'}
                 icon="format-list-checks"
             />
 

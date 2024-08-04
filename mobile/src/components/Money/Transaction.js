@@ -3,32 +3,36 @@ import { Text, View, TouchableOpacity } from "react-native";
 import { SwipeRow } from 'react-native-swipe-list-view';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const Transaction = ({ item, onEdit, onDelete }) => (
+const Transaction = ({ item, onEdit = null, onDelete = null }) => (
     <SwipeRow rightOpenValue={-112} disableRightSwipe>
         <View className="flex-row justify-end items-center bg-silver-500">
-            <View className="flex-row bg-yellow-500 h-16 w-14 justify-center items-center rounded">
-                <TouchableOpacity onPress={onEdit}>
-                    <Text className="text-white">
-                        <MaterialCommunityIcons
-                            name="pencil"
-                            size={24}
-                            color="white"
-                        />
-                    </Text>
-                </TouchableOpacity>
-            </View>
+            {onEdit && (
+                <View className="flex-row bg-yellow-500 h-16 w-14 justify-center items-center rounded">
+                    <TouchableOpacity onPress={onEdit}>
+                        <Text className="text-white">
+                            <MaterialCommunityIcons
+                                name="pencil"
+                                size={24}
+                                color="white"
+                            />
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            )}
 
-            <View className="flex-row bg-red-500 h-16 w-14 justify-center items-center rounded">
-                <TouchableOpacity onPress={onDelete}>
-                    <Text className="text-white">
-                        <MaterialCommunityIcons
-                            name="delete"
-                            size={24}
-                            color="white"
-                        />
-                    </Text>
-                </TouchableOpacity>
-            </View>
+            {onDelete && (
+                <View className="flex-row bg-red-500 h-16 w-14 justify-center items-center rounded">
+                    <TouchableOpacity onPress={onDelete}>
+                        <Text className="text-white">
+                            <MaterialCommunityIcons
+                                name="delete"
+                                size={24}
+                                color="white"
+                            />
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            )}
         </View>
 
         <View className={`flex-row items-center border border-gray-300 bg-white p-3 mb-2 rounded ${item.amount > 0 ? 'border-green-300' : 'border-red-300'}`}>
@@ -43,6 +47,7 @@ const Transaction = ({ item, onEdit, onDelete }) => (
                     R$ {parseFloat(item.amount).toFixed(2)}
                 </Text>
                 <Text>{item.title}</Text>
+                <Text className="text-gray-500 text-sm">{new Date((item.created_at)).toLocaleDateString('pt-BR')}</Text>
             </View>
         </View>
     </SwipeRow>
