@@ -25,6 +25,7 @@ class GoalRepository extends BaseRepository implements GoalRepositoryInterface
         }
 
         $query->orderBy('id', 'desc');
+        $query->with('transactions');
 
         return $query->get();
     }
