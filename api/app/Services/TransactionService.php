@@ -39,6 +39,7 @@ class TransactionService
             $this->openAi->createSystemMessage(json_encode($transactions)),
             $this->openAi->createUserMessage("Classifique por categorias as receitas e despesas informadas de uma forma mais ambragente, no final me retorne um json com o título da categoria e o somatório gasto. Separa por receitas e despesas."),
             $this->openAi->createUserMessage("Retorne apenas um data JSON, sem formatação."),
+            $this->openAi->createUserMessage("Se não tiver nada não retorne a categoria."),
             $this->openAi->createUserMessage("{'name':'example'}"),
         ];
 

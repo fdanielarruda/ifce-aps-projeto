@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import FooterApp from '../components/App/FooterApp';
 import SeeObjectivesButton from '../components/Home/SeeObjectivesButton';
 import CreateObjectivesButton from '../components/Home/CreateObjectivesButton';
+import ReportButton from '../components/Home/ReportButton';
 import apiUtils from '../utils/apiUtils';
 
 const HomeScreen = () => {
@@ -70,6 +71,7 @@ const HomeScreen = () => {
 
                     <SeeObjectivesButton navigation={navigation} />
                     <CreateObjectivesButton navigation={navigation} />
+                    <ReportButton navigation={navigation} />
                 </View>
             </View>
 

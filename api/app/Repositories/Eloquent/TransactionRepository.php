@@ -17,12 +17,12 @@ class TransactionRepository extends BaseRepository implements TransactionReposit
         $query = $this->model->query();
 
         if (isset($data)) {
-            if ($data['date_start']) {
+            if (isset($data['date_start'])) {
                 $query->where('created_at', '>=', $data['date_start'] . ' 00:00:00');
                 unset($data['date_start']);
             }
             
-            if ($data['date_end']) {
+            if (isset($data['date_end'])) {
                 $query->where('created_at', '<=', $data['date_end'] . ' 23:59:59');
                 unset($data['date_end']);
             }
