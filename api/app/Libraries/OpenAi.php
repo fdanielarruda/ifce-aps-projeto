@@ -40,12 +40,4 @@ class OpenAi
 
         return $response->json();
     }
-
-    public function createMessage($role, $content)
-    {
-        return [
-            "role" => $role,
-            "content" => $content
-        ];
-    }
 }

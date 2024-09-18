@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Helpers\ArrayHelper;
 use App\Helpers\AuthHelper;
+use App\Libraries\MessageBuilder;
 use App\Libraries\OpenAi;
 use App\Repositories\Interfaces\TransactionRepositoryInterface;
 
@@ -24,8 +25,6 @@ class TransactionService
 
     public function organizeByCategories(array $request)
     {
-        $openAi = OpenAi::getInstance();
-
         $request['user_id'] = $this->authHelper->getId();
 
         $transactions = $this->repository->list($request);
@@ -34,14 +33,18 @@ class TransactionService
             return [];
         }
 
-        $messages = [
-            $openAi->createMessage("system", "Salve esse dataset"),
-            $openAi->createMessage("system", json_encode($transactions)),
-            $openAi->createMessage("user", "Classifique por categorias as receitas e despesas informadas de uma forma mais abrangente, no final me retorne um json com o título da categoria e o somatório gasto. Separa por receitas e despesas."),
-            $openAi->createMessage("user", "Retorne apenas um data JSON, sem formatação."),
-            $openAi->createMessage("user", "Se não tiver nenhum valor na categoria não a retorne."),
-            $openAi->createMessage("user", "{'name':'example'}"),
-        ];
+        $messageBuilder = new MessageBuilder();
+
+        $messages = $messageBuilder
+            ->addMessage('system', 'Salve esse dataset')
+            ->addMessage('system', json_encode($transactions))
+            ->addMessage('user', "Classifique por categorias as receitas e despesas informadas de uma forma mais abrangente, no final me retorne um json com o título da categoria e o somatório gasto. Separa por receitas e despesas.")
+            ->addMessage('user', "Retorne apenas um data JSON, sem formatação.")
+            ->addMessage('user', "Se não tiver nenhum valor na categoria não a retorne.")
+            ->addMessage('user', "{'name':'example'}")
+            ->getMessages();
+
+        $openAi = OpenAi::getInstance();
 
         $response = $openAi->make($messages);
 
