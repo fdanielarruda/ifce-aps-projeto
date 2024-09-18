@@ -25,6 +25,7 @@ Route::group(['middleware' => 'api'], function () {
 
         Route::group(['prefix' => 'transactions'], function () {
             Route::get('/', [TransactionController::class, 'list']);
+            Route::get('/organize-by-categories', [TransactionController::class, 'organizeByCategories']);
             Route::post('/', [TransactionController::class, 'create']);
             Route::put('/{transaction}', [TransactionController::class, 'update']);
             Route::delete('/{transaction}', [TransactionController::class, 'delete']);

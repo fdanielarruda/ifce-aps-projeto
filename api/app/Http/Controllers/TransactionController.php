@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Transaction\TransactionCreateRequest;
+use App\Http\Requests\Transaction\TransactionOrganizeByCategoriesRequest;
 use App\Http\Requests\Transaction\TransactionUpdateRequest;
 use App\Http\Resources\BaseResource;
 use App\Http\Resources\TransactionResource;
@@ -26,6 +27,15 @@ class TransactionController
         $transactions = $this->service->getAll();
 
         return TransactionResource::collection($transactions);
+    }
+
+    public function organizeByCategories(TransactionOrganizeByCategoriesRequest $request)
+    {
+        $data = $this->service->organizeByCategories($request->only(['date_start', 'date_end']));
+
+        return response()->json([
+            'data' => $data
+        ]);
     }
 
     public function create(TransactionCreateRequest $request): TransactionResource

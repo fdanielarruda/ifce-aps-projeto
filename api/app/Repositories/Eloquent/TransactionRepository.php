@@ -4,7 +4,6 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Transaction;
 use App\Repositories\Interfaces\TransactionRepositoryInterface;
-use Illuminate\Support\Facades\DB;
 
 class TransactionRepository extends BaseRepository implements TransactionRepositoryInterface
 {
@@ -18,6 +17,16 @@ class TransactionRepository extends BaseRepository implements TransactionReposit
         $query = $this->model->query();
 
         if (isset($data)) {
+            if ($data['date_start']) {
+                $query->where('created_at', '>=', $data['date_start'] . ' 00:00:00');
+                unset($data['date_start']);
+            }
+            
+            if ($data['date_end']) {
+                $query->where('created_at', '<=', $data['date_end'] . ' 23:59:59');
+                unset($data['date_end']);
+            }
+
             $query->where($data);
         }
 
