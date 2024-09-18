@@ -12,9 +12,7 @@ class TransactionService
     public function __construct(
         protected TransactionRepositoryInterface $repository,
         protected AuthHelper $authHelper,
-        protected ArrayHelper $arrayHelper,
-
-        protected OpenAi $openAi
+        protected ArrayHelper $arrayHelper
     ) {}
 
     public function getAll()
@@ -26,6 +24,8 @@ class TransactionService
 
     public function organizeByCategories(array $request)
     {
+        $openAi = OpenAi::getInstance();
+
         $request['user_id'] = $this->authHelper->getId();
 
         $transactions = $this->repository->list($request);
@@ -35,20 +35,21 @@ class TransactionService
         }
 
         $messages = [
-            $this->openAi->createSystemMessage("Salve esse dataset"),
-            $this->openAi->createSystemMessage(json_encode($transactions)),
-            $this->openAi->createUserMessage("Classifique por categorias as receitas e despesas informadas de uma forma mais ambragente, no final me retorne um json com o título da categoria e o somatório gasto. Separa por receitas e despesas."),
-            $this->openAi->createUserMessage("Retorne apenas um data JSON, sem formatação."),
-            $this->openAi->createUserMessage("Se não tiver nada não retorne a categoria."),
-            $this->openAi->createUserMessage("{'name':'example'}"),
+            $openAi->createMessage("system", "Salve esse dataset"),
+            $openAi->createMessage("system", json_encode($transactions)),
+            $openAi->createMessage("user", "Classifique por categorias as receitas e despesas informadas de uma forma mais abrangente, no final me retorne um json com o título da categoria e o somatório gasto. Separa por receitas e despesas."),
+            $openAi->createMessage("user", "Retorne apenas um data JSON, sem formatação."),
+            $openAi->createMessage("user", "Se não tiver nenhum valor na categoria não a retorne."),
+            $openAi->createMessage("user", "{'name':'example'}"),
         ];
 
-        $response = $this->openAi->make($messages);
+        $response = $openAi->make($messages);
 
         $data = $response['choices'][0]['message']['content'] ?? "";
 
         return json_decode($data, true);
     }
+
 
     public function create(array $data)
     {

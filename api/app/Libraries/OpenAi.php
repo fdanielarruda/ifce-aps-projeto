@@ -7,6 +7,19 @@ use Illuminate\Support\Facades\Http;
 
 class OpenAi
 {
+    private static $instance = null;
+
+    private function __construct() {}
+
+    public static function getInstance()
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
+
     public function make($messages)
     {
         $url = env('OPENAI_API_URL');
@@ -28,18 +41,10 @@ class OpenAi
         return $response->json();
     }
 
-    public function createSystemMessage($content)
+    public function createMessage($role, $content)
     {
         return [
-            "role" => "system",
-            "content" => $content
-        ];
-    }
-
-    public function createUserMessage($content)
-    {
-        return [
-            "role" => "user",
+            "role" => $role,
             "content" => $content
         ];
     }
