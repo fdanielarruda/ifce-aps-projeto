@@ -41,7 +41,7 @@ class TransactionService
             ->addMessage('user', "Classifique por categorias as receitas e despesas informadas de uma forma mais abrangente, no final me retorne um json com o título da categoria e o somatório gasto. Separa por receitas e despesas.")
             ->addMessage('user', "Retorne apenas um data JSON, sem formatação.")
             ->addMessage('user', "Se não tiver nenhum valor na categoria não a retorne.")
-            ->addMessage('user', "{'name':'example'}")
+            ->addMessage('user', "retorne nesse formato: {\"receitas\": [{\"categoria\": \"exemplo\", \"total\": 0}], \"despesas\": [{\"categoria\": \"exemplo\", \"total\": 0}]}")
             ->getMessages();
 
         $openAi = OpenAi::getInstance();

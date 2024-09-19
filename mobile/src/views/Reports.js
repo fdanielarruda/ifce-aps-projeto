@@ -43,11 +43,11 @@ const App = ({ route }) => {
 
             // voltar um dia
             let date_end = new Date(endDate)
-            date_end.setDate(date_end.getDate() - 1)
+            // date_end.setDate(date_end.getDate() - 1)
             date_end = date_end.toISOString().split('T')[0]
 
             let date_start = new Date(startDate)
-            date_start.setDate(date_start.getDate() - 1)
+            // date_start.setDate(date_start.getDate() - 1)
             date_start = date_start.toISOString().split('T')[0]
 
             const response = await apiUtils(`transactions/organize-by-categories?date_start=${date_start}&date_end=${date_end}`, 'GET')
